@@ -1,0 +1,105 @@
+/*
+
+Problem Statement : Write an X86/64 ALP to find the largest of given Byte/Word/Dword/64-bit numbers.
+
+*/
+
+section .data
+
+	arr_msg db 'Array Elements Are:: ',10
+		dq '0fa10001h',10
+		dq '0b200002h',10
+		dq '0fff0003h',10
+		dq '0d400004h',10
+		dq '0fffffffh',10
+	arr_len : equ $-arr_msg                                                 
+
+	larg_msg db 'Largest Number is::'
+	larg_len: equ $-larg_msg
+
+	
+	nwline db 10
+
+	array dq 0fa10001h,0b200002h,0fff0003h,0d400004h, 0fffffffh          ;array elements
+	arrcnt dd 05h
+
+section .bss
+	arr_num resb 16
+	large resq 1
+
+
+%macro dispmsg 2
+	mov rax,1	;System call for write
+	mov rdi,1	;standard output stream
+	mov rsi,%1	;message start address
+	mov rdx,%2	;message length
+	syscall
+%endmacro
+
+section .text
+	global _start
+_start:
+	
+	dispmsg arr_msg ,arr_len
+	
+
+	mov rsi,array                      ; si pointing to starting addr of array
+	mov rcx,[arrcnt]                 ; cx contains the no of elements in the array i.e 05
+	mov rax,[rsi]                      ; starting addr copied to ax
+	dec rcx                                ; cx decremented by 1
+
+lup1:	add rsi,08       	;Point to next element
+	cmp rax,[rsi]   ; compare value present at address ax with next element
+			; CMP subtracts the second operand from the first, 
+	ja lskip1  	; jump if unsigned above, CF=0,  skip the very next instruction
+	xchg rax,[rsi]  ;  next no is greater then move it to ax
+lskip1:	loop lup1        ; if ax  no is greater repeat the lup1
+	mov [large],rax   ; finally move ax content to ‘large’
+
+	dispmsg larg_msg,larg_len    ; display  larg_msg 
+	mov rbx,[large]                     ; 
+	call disp_num
+	dispmsg nwline,1
+	
+
+exit:	mov rax,60
+	mov rdi,0
+	syscall
+
+
+disp_num:
+	mov rdi,arr_num	;point esi to buffer
+
+	mov rcx,16		;load number of digits to display 
+
+
+dispup1:                                   ; hex conversion 
+	rol rbx,4		;rotate number left by four bits
+	mov dl,bl		;move lower byte in dl
+	and dl,0fh		;mask upper digit of byte in dl
+	add dl,30h		;add 30h to calculate ASCII code
+	cmp dl,39h		;compare with 39h
+	jbe dispskip1		;if less than 39h keep adding 07 more 
+	add dl,07h		;else add 07
+
+dispskip1:
+	mov [rdi],dl		;store ASCII code in buffer
+	inc rdi			;point to next byte
+	loop dispup1		;decrement the count of digits to display
+				;if not zero jump to repeat
+	dispmsg arr_num,16   ;displaymsg call
+	ret
+ 
+/*
+    
+Output:
+
+Array Elements Are::
+0000000000000005
+0000000000000007
+0000000000000009
+0000000000000003
+0000000000000008
+Largest Number is::0000000000000009
+
+*/

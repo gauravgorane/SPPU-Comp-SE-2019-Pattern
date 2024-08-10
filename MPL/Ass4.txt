@@ -1,0 +1,84 @@
+/*
+
+Problem Statement : Write an X86/64 ALP to count number of positive and negative numbers from the array.
+
+*/
+
+section .data
+welmsg db 10,'Welcome to count +ve and -ve numbers in an array',10
+welmsg_len equ $-welmsg
+pmsg db 10,'Count of +ve numbers::'
+pmsg_len equ $-pmsg
+nmsg db 10,'Count of -ve numbers::'
+nmsg_len equ $-nmsg
+nwline db 10
+
+array dw 8505h,90ffh,0087h,0088h,8a9fh,00adh,0002h
+arrcnt equ 7
+pcnt db 0
+ncnt db 0
+section .bss
+dispbuff resb 2
+
+%macro print 2
+mov rax, 1
+mov rdi, 1
+mov rsi, %1
+mov rdx, %2
+syscall
+%endmacro
+
+section .text
+global _start
+_start:
+print welmsg,welmsg_len
+mov rsi,array
+mov rcx,arrcnt
+up1:
+bt word[rsi],15
+jnc pnxt
+inc byte[ncnt]
+jmp pskip
+pnxt: inc byte[pcnt]
+pskip: inc rsi
+inc rsi
+loop up1
+print pmsg,pmsg_len
+mov bl,[pcnt]
+call disp8num
+print nmsg,nmsg_len
+mov bl,[ncnt]
+call disp8num
+print nwline,1 ;New line char
+exit:
+mov rax,60
+mov rdi,0
+syscall
+
+disp8num:
+mov rcx,2                               ;Number digits to display
+mov rdi,dispbuff                        ;Temp buffer
+dup1:
+rol bl,4                                ;Rotate number from bl to get MS digit to LS digit
+mov al,bl                                   ;Move rotated number to AL
+and al,0fh                                    ;Mask upper digit
+cmp al,09                                       ;Compare with 9
+jbe dskip                                ;If number below or equal to 9 go to add only 30h
+add al,07h                                  ;Else first add 07h
+dskip: add al,30h                         ;Add 30hWrite an ALP to count no. of positive and negative numbers from the array.
+mov [edi],al                                    ;Store ASCII code in temp buff
+inc rdi                                        ;Increment pointer to next location in temp buff
+loop dup1                                       ;repeat till ecx becomes zero
+print dispbuff,2                                     ;display the value from temp buff
+ret                                           ;return to calling program
+
+/*
+
+Output :
+
+Welcome to count +ve and -ve numbers in an array
+
+Count of +ve numbers::04
+Count of -ve numbers::03
+
+*/
