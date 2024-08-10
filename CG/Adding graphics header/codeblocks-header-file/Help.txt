@@ -1,0 +1,57 @@
+[TUTORIAL WITH CODE::BLOCKS] 
+[Step by step process]
+----------------------------------------------------------------------------------------------------------------------------
+
+	How to complile graphics.h on Windows 10 / 8.1 /8 64bit and 32bit PC.
+		
+----------------------------------------------------------------------------------------------------------------------------
+
+
+[Installation of CodeBlocks]
+	
+	1. Download the RAR file.
+	2. Exact all files from the RAR file.
+	3. Install the 'codeblocks-13.12mingw-setup.exe'.
+		(If CodeBlocks is already installed in your PC then just Uninstall it first and install it)
+
+[Copy-Paste Header and Library file]
+		
+	4. Open 'Extra' Folder .
+	5. Copy the two files Graphic.h and Winbgim.h 
+	4. After successful install, Open Installed file locataion of CodeBlocks. Make a sure CodeBlocks is closed totally.
+		Default location:*
+				   (64bit PC) C:\Program Files (x86)\CodeBlocks
+				   (32bit PC) C:\Program Files\CodeBlocks
+
+	7. Open MinGW folder.
+	8. Now paste the two files to include folder.
+	9. Again go to 'Extra' folder and copy libbgi.a 
+	10. Paste it to lib folder.
+
+[Setup Linker]
+	
+	11. Now open CodeBlock.
+	12. Open Settings => Compiler
+	13. Then go to 'Linker settings'.
+	14. Here you will see 2 box. 
+	15. copy+paste below words to 'Other linker option' (Right side box).
+			
+			-lbgi -lgdi32 -luser32
+
+	16. And for left side (Link Libraries) : click on 'Add' and then '...'
+	17. Find the libbgi.a file that you have already pasted before.
+		 Default location:*
+				   (64bit PC) C:\Program Files (x86)\CodeBlocks\MinGW\lib 
+				   (32bit PC) C:\Program Files\CodeBlocks\MinGW\lib
+	18. Now click to OK,OK.
+	
+	19. Congratulation, now your CodeBlocks is ready to complile graphics.h
+	
+	20. Open 'Test Graphics.cpp' to CodeBlocks and try to compile it.
+
+----------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
+		
+
+ 
+	
